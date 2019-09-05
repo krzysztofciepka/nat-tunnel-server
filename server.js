@@ -15,6 +15,7 @@ app.get('/api/register/:id', async (req, res) => {
     return res.send({
       url: `http://${process.env.HOSTNAME}/${client.id}`,
       port: client.port,
+      host: process.env.HOSTNAME
     });
   } catch (err) {
     debug(err);
