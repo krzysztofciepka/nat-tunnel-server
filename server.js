@@ -13,7 +13,8 @@ app.get('/api/register/:id', async (req, res) => {
     const client = await connManager.registerClient(req.params.id);
 
     return res.send({
-      url: `http://localhost:3000/${client.id}`,
+      url: `http://${process.env.HOSTNAME}/${client.id}`,
+      port: client.port,
     });
   } catch (err) {
     debug(err);
@@ -38,9 +39,10 @@ app.use((req, res) => {
     return res.sendStatus(404);
   }
 
+  debug('Received valid request for client: ', client.id);
   client.handleRequest(req, res);
 });
 
-app.listen(3000, () => {
-  debug('Server started');
+app.listen(process.env.PORT, () => {
+  debug('NAT tunnel server started on port: ', process.env.PORT);
 });
