@@ -6,6 +6,10 @@ const debug = require('debug')('nat-tunnel-server:server');
 
 const app = express();
 
+if (process.env.NODE_ENV === 'development') {
+  app.set('subdomain offset', 1);
+}
+
 const connManager = new ConnectionManager();
 
 app.get('/api/register/:id', async (req, res) => {
@@ -13,28 +17,28 @@ app.get('/api/register/:id', async (req, res) => {
     const client = await connManager.registerClient(req.params.id);
 
     return res.send({
-      url: `http://${process.env.HOSTNAME}/${client.id}`,
+      url: `http://${client.id}.${process.env.HOSTNAME}/`,
       port: client.port,
-      host: process.env.HOSTNAME
     });
   } catch (err) {
     debug(err);
     if (err instanceof ClientExistsError) {
-      return res.sendStatus(400);
+      return res.status(400).send({
+        error: err.message,
+      });
     }
     return res.sendStatus(500);
   }
 });
 
 app.use((req, res) => {
-  const path = req.path.split('/');
-
+  const { subdomains } = req;
   // missing client ID
-  if (path.length < 2) {
+  if (!subdomains.length) {
     return res.sendStatus(400);
   }
 
-  const client = connManager.findClient(path[1]);
+  const client = connManager.findClient(subdomains[0]);
 
   if (!client) {
     return res.sendStatus(404);

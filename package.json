@@ -9,12 +9,14 @@
     "express": "^4.17.1"
   },
   "devDependencies": {
+    "cross-env": "^5.2.1",
     "eslint": "^6.3.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.18.2"
   },
   "scripts": {
     "start": "node -r esm server.js",
+    "start-local": "cross-env NODE_ENV=development PORT=3000 HOSTNAME=localhost:3000 node -r esm server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
