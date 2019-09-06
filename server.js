@@ -41,12 +41,11 @@ app.get('/api/register/:id', async (req, res) => {
 });
 
 // all other requests should be forwarded
-app.use((req, res) => {
+app.use((req, res, next) => {
   const clientId = Utils.resolveId(req);
   if (!clientId) {
-    return res.status(400).send({
-      error: 'Missing client ID',
-    });
+    // go to landing page
+    return next();
   }
 
   const client = clientManager.findClient(clientId);
@@ -60,6 +59,8 @@ app.use((req, res) => {
   debug('Received request for: ', client.id);
   client.handleRequest(req, res);
 });
+
+app.use(express.static('public'));
 
 const server = app.listen(process.env.PORT, () => {
   debug('NAT tunnel server started on port: ', process.env.PORT);

@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <title>
+      NAT-tunnel homepage
+    </title>
+    <style>
+      h1,
+      h2,
+      p:not(.text) {
+        text-align: center;
+      }
+
+      .text {
+        display: flex;
+        justify-content: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>nat tunnel</h1>
+    <h2>Description</h2>
+    <p>Server for nat-tunnel CLI tool</p>
+    <h2>Usage</h2>
+    <p>nat-tunnel {name} {local host} {local port}</p>
+    <h2>How it works</h2>
+    <p class="text">
+      Connection is based on TCP sockets. <br /><br />
+      Nat-tunnel client requests a dedicated TCP socket on nat-tunnel server and
+      binds it to the locally running service via a duplex stream<br /><br />
+      Nat-tunnel service creates a dedicated subdomain for client and streams
+      all HTTP requests on that domain to the socket<br /><br />
+      When the local service responds, a HTTP response is sent back to the
+      original requester<br /><br />
+      Connection stays active as long as nat-tunnel client is running
+    </p>
+  </body>
+</html>
