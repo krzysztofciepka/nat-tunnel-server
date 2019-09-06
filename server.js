@@ -3,9 +3,12 @@ import { ClientExistsError } from './lib/Errors';
 import { Utils } from './lib/Utils';
 
 const express = require('express');
+const http = require('http');
 const debug = require('debug')('nat-tunnel-server:server');
 
 const app = express();
+const server = http.createServer(app);
+server.setTimeout(15 * 60 * 1000); // 15 minutes
 
 if (process.env.NODE_ENV === 'development') {
   app.set('subdomain offset', 1);
