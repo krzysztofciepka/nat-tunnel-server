@@ -3,12 +3,9 @@ import { ClientExistsError } from './lib/Errors';
 import { Utils } from './lib/Utils';
 
 const express = require('express');
-const http = require('http');
 const debug = require('debug')('nat-tunnel-server:server');
 
 const app = express();
-const server = http.createServer(app);
-server.setTimeout(15 * 60 * 1000); // 15 minutes
 
 if (process.env.NODE_ENV === 'development') {
   app.set('subdomain offset', 1);
@@ -27,7 +24,9 @@ app.get('/api/register/:id', async (req, res) => {
     const client = await clientManager.registerClient(req.params.id);
 
     return res.send({
-      url: `http://${client.id}.${process.env.HOST}${process.env.PORT === 80 ? '' : `:${process.env.PORT}`}/`,
+      url: process.env.URL_SCHEME === 'subdomain'
+        ? `http://${client.id}.${process.env.HOST}${process.env.PORT === 80 ? '' : `:${process.env.PORT}`}/`
+        : `http://${process.env.HOST}${process.env.PORT === 80 ? '' : `:${process.env.PORT}`}/${client.id}/`,
       port: client.port,
     });
   } catch (err) {
@@ -43,7 +42,7 @@ app.get('/api/register/:id', async (req, res) => {
 
 // all other requests should be forwarded
 app.use((req, res) => {
-  const clientId = req.hostname.replace(`${process.env.HOST}`, '').replace(/\./g, '');
+  const clientId = Utils.resolveId(req);
   if (!clientId) {
     return res.status(400).send({
       error: 'Missing client ID',
@@ -62,6 +61,8 @@ app.use((req, res) => {
   client.handleRequest(req, res);
 });
 
-app.listen(process.env.PORT, () => {
+const server = app.listen(process.env.PORT, () => {
   debug('NAT tunnel server started on port: ', process.env.PORT);
 });
+
+server.timeout = 900000; // 15 minutes
