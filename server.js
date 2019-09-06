@@ -24,7 +24,7 @@ app.get('/api/register/:id', async (req, res) => {
     const client = await clientManager.registerClient(req.params.id);
 
     return res.send({
-      url: `http://${client.id}.${process.env.HOSTNAME}/`,
+      url: `http://${client.id}.${process.env.HOST}${process.env.PORT === 80 ? '' : `:${process.env.PORT}`}/`,
       port: client.port,
     });
   } catch (err) {
@@ -40,14 +40,14 @@ app.get('/api/register/:id', async (req, res) => {
 
 // all other requests should be forwarded
 app.use((req, res) => {
-  const { subdomains } = req;
-  if (!subdomains.length) {
+  const clientId = req.hostname.replace(`${process.env.HOST}`, '').replace(/\./g, '');
+  if (!clientId) {
     return res.status(400).send({
       error: 'Missing client ID',
     });
   }
 
-  const client = clientManager.findClient(subdomains[0]);
+  const client = clientManager.findClient(clientId);
 
   if (!client) {
     return res.status(404).send({
