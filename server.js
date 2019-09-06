@@ -25,8 +25,8 @@ app.get('/api/register/:id', async (req, res) => {
 
     return res.send({
       url: process.env.URL_SCHEME === 'subdomain'
-        ? `http://${client.id}.${process.env.HOST}${process.env.PORT === 80 ? '' : `:${process.env.PORT}`}/`
-        : `http://${process.env.HOST}${process.env.PORT === 80 ? '' : `:${process.env.PORT}`}/${client.id}/`,
+        ? `http://${client.id}.${process.env.HOST}/`
+        : `http://${process.env.HOST}/${client.id}/`,
       port: client.port,
     });
   } catch (err) {
