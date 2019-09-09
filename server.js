@@ -13,6 +13,16 @@ if (process.env.NODE_ENV === 'development') {
 
 const clientManager = new ClientManager();
 
+app.get('/api/statistics', (req, res) => {
+  res.send({
+    clients: clientManager.registeredClients.map(
+      (client) => ({
+        id: client.id, port: client.port, created: client.created, lastActive: client.lastActive,
+      }),
+    ),
+  });
+});
+
 app.get('/api/register/:id', async (req, res) => {
   try {
     if (!Utils.validateId(req.params.id)) {
