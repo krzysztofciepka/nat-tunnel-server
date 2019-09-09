@@ -16,7 +16,7 @@
   },
   "scripts": {
     "start": "node -r esm server.js",
-    "start-local": "cross-env NODE_ENV=development PORT=3000 HOST=localhost node -r esm server.js",
+    "start-local": "cross-env NODE_ENV=development PORT=3000 HOST=localhost:3000 node -r esm server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
